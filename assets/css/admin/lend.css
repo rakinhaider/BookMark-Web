@@ -1,0 +1,38 @@
+.div{
+	margin: 10px;
+	padding: 10px;
+}
+
+#book{
+	padding: 20px;
+	width:540px;
+	height:420px;
+	position: absolute;
+    left: 230px;
+    top: 205px;
+}
+#user{
+	position: relative;
+    left: 40px;
+    top: 20px;
+	padding: 20px;
+	width:540px;
+	margin-left: 500px;
+	height:420px;
+}
+
+#book-selector{
+	padding: 30px;
+	width: 200px;
+	height: 50px;
+}
+#user-selector{
+	padding: 30px;
+	width: 200px;
+	height: 50px;
+}
+
+#breadcrumbdiv{
+	padding: 10px;
+	margin: 10px;
+}

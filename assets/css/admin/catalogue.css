@@ -1,0 +1,18 @@
+#catalogue{
+	margin:10px;
+	border-color:#fff;
+	border-style: solid;
+	border-width: 5px; 
+}
+#breadcrumbdiv{
+	padding: 10px;
+	margin: 10px;
+}
+.page-header{
+	margin: 10px;
+	padding: 10px;
+	color: #428bca;
+}
+#icon-image{
+	height: 100%;
+}
