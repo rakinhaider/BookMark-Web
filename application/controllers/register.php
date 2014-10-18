@@ -42,6 +42,7 @@ class Register extends CI_Controller{
 		}
 		else 
 		{
+			$password=md5($password);
 			$this->db->query("INSERT INTO  `users` (
 					`first_name` ,
 					`last_name` ,

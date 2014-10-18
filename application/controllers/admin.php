@@ -25,7 +25,7 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{
@@ -43,22 +43,44 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{
-			$data=array(
-			'userName'=>$userName);
-			$this->load->view('admin/insert-book');
+			$this->load->model('authors');
+			$this->load->model('publishers');
+
+			$data['userName']=$userName;
+			$data['authors']=$this->authors->getAll();
+			$data['publishers']=$this->publishers->getAll();
+			$this->load->view('admin/insert-book',$data);
 		}
 		
 
 	}
+	public function insertNewCopy()
+	{
+		$this->load->model('copies');
+		$this->copies->insertNew($_POST);
 
+		$this->load->view('admin/insertion-successful');		
+	
+	}
 	public function insertNewBook()
 	{
-		$this->db->model('books');
-		$this->books->insert($_POST);
+		$this->load->model('books');
+		$this->books->insert($_POST);		
+
+		$bTitle=$this->session->flashdata('bTitle');
+        $book_id=$this->session->flashdata('bId' );  
+
+		$data=array(
+			'bTitle'=>$bTitle,
+			'bId'=>$book_id
+		);
+
+		$this->load->view('admin/insert-copy',$data);
+
 	}
 	public function update()
 	{
@@ -68,11 +90,11 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{
-			$this->db->model('books');
+			$this->load->model('books');
 			$books=$this->books->getAll();
 			$data=array(
 			'userName'=>$userName,
@@ -91,7 +113,7 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{
@@ -110,7 +132,7 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{
@@ -129,7 +151,7 @@ class Admin extends CI_Controller {
 
 		if($loggedIn!=1)
 		{
-			error_access();
+			$this->error_access();
 		}
 		else if($userName=="admin")
 		{

@@ -99,6 +99,7 @@
                 </ol>
             </div>
         </div>
+    
         <div id="catalogue">
             <table class="table table-striped">
                 <thead>
@@ -109,14 +110,13 @@
                         <th>Available Copies</th>
                     </tr>
                 </thead>
-                <?php echo $record; ?>
                 <tbody>
 
                     <?php foreach ($record as $row): ?>
                         <tr>
-                            <td><?php echo $row->title; ?></td>
-                            <td><?php echo $row->authorname; ?></td>
-                            <td><?php echo $row->pubname; ?></td>
+                            <td><a href=""><?php echo $row->title; ?></a></td>
+                            <td><a href=""><?php echo $row->authorname; ?></a></td>
+                            <td><a href=""><?php echo $row->pubname; ?></a></td>
                             <td><?php echo $row->available; ?></td>
                         </tr>
                         

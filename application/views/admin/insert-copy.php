@@ -1,7 +1,9 @@
-
+<?php $this->load->helper('url'); ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
+    <?php $copyCount=1; ?>
 
 <head>
 
@@ -18,45 +20,24 @@
 
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
-
-    <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
-    <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
+    <!-- <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
     <script>
-
-        /*var data=[{id:1,text:'1'},
-                    {id:2,text:'2'},
-                    {id:4,text:'4'},
-                    {id:20,text:'5'},
-                    {id:7,text:'7'}];*/
-        <?php $authors=$this->db->query("SELECT author_id as id, name as text FROM authors"); ?>
-        var data=[<?php $first=1; ?>
-            <?php foreach ($authors->result() as $row) {
-                if(!$first)echo ",";
-                echo "{id:$row->id,text:'$row->text'}";
-                
-                $first=0;
-            } ?>];
+        
         $(document).ready(function() { 
-            $("#selected-text").select2({
-                data:{
-                     results: data
-                }
+            var data=<?php echo json_encode($authors); ?>;
+            function format(item) { return item.name; }
+            $("#selected-text1").select2({
+                data:<?php echo json_encode($authors); ?>;
             }); 
 
-            $("#selected-text").change(function() {
-                //var theID = $(test).val(); // works
-                //var theSelection = $(test).filter(':selected').text(); // doesn't work
-                var theID = $("#selected-text").select2('data').id;
-                var theSelection = $("#selected-text").select2('data').text;
-                
-                var fullSenetece="You have selected " + theSelection;
-                $('#selectedText').text(fullSenetece);
-                $("#update-form").css("visibility","visible");
+            $("#selected-text1").change(function() {
             });
         });
-    </script>
-
+        $("#addCopyButton").click(function(){
+                <?php $copyCount++; ?>
+                $("#copyEntries").append("<label><?php echo $copyCount; ?></label><label>ISBN</label><input type="text" class="form-control"><br><label>Edition Name</label><input type="text" class="form-control"><br><label>Year Of Publication</label><input type="text" class="form-control"><br><label>Typeset</label><input type="text" class="form-control"><br><label>Printer</label><input type="text" class="form-control"><br>");
+            });
+    </script>-->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -85,7 +66,7 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                	<a href="#">Home</a>
+                    <a href="#">Home</a>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Rakin<b class="caret"></b></a>
@@ -105,16 +86,16 @@
                     <li >
                         <a href="<?php echo base_url('index.php/admin') ?>"> Dashboard</a>
                     </li>
-                    <li >
+                    <li class="active">
                         <a href="<?php echo base_url('index.php/admin/insert') ?>">Insert New Book</a>
                     </li>
-                    <li class="active">
+                    <li>
                         <a href="<?php echo base_url('index.php/admin/update') ?>">Update Book Information</a>
                     </li>
                     <li>
                         <a href="<?php echo base_url('index.php/lend') ?>">Lend Book</a>
                     </li>
-                    <li >
+                    <li>
                         <a href="<?php echo base_url('index.php/admin/fine') ?>"> Manage fines.</a>
                     </li>
                     <li>
@@ -125,7 +106,7 @@
             <!-- /.navbar-collapse -->
         </nav>
 
-        <div id="page-wrapper" style="height:100vh">
+        <div id="page-wrapper">
 
             <div class="container-fluid">
 
@@ -135,43 +116,40 @@
                         <h1 class="page-header" style=" margin: 10px;
                                                 padding: 10px;
                                                 color: #428bca;">
-                            Update Books Information 
+                            Insert New Copy Of
                         </h1>
                         <ol class="breadcrumb">
-                            <li class="active">
-                                Commit changes to your library.
+                            <li >
+                                <i class="fa fa-dashboard"></i>
+                                <h3>Name: <?php echo $bTitle; ?></h3>
                             </li>
                         </ol>
                     </div>
-                </div>
+                </div>                    
+                <div class="well">
+                    <form role="form" method="POST" action="<?php echo base_url('index.php/admin/insertNewCopy') ?>">
 
-                <label>Select a book</label><br>
-                <input type="text" id="selected-text" class="row col-lg-4"><br><br>
-                <label id="selectedText"></label>
+                        <input type="hidden" name="bTitle" value="<?php echo $bTitle; ?>">
+                        <input type="hidden" name="bId" value="<?php echo $bId; ?>">
 
+                        <label >ISBN:</label><br>
+                        <input name="isbn" type="text" class="form-control"><br>
+                        <label >Edition Name:</label><br>
+                        <input name="edition_name" type="text" class="form-control"><br>
+                        <label >Year Of Publication:</label><br>
+                        <input name="year_of_publication" type="text" class="form-control"><br>
+                        <label >Typeset:</label><br>
+                        <input name="typeset" type="text" class="form-control"><br>
+                        <label >Printer:</label><br>
+                        <input name="printer" type="text" class="form-control"><br>
+                        
+                        <input type="submit" class="btn btn-success" value="Submit">
+                    </form>
+                </div> 
 
-                
-
-
-                <form class="well" role="form">
-                    <label >Name:</label><br>
-                    <input type="text" class="form-control" ><br>
-                    <label>Author:</label><br>
-                    <input type="text" class="form-control"><br>
-                    <label>Publisher:</label><br>
-                    <input type="text" class="form-control"><br>
-                    <label>Edition:</label><br>
-                    <input type="text" class="form-control"><br>
-                    <label>No. of Copies</label><br>
-                    <input type="text" class="form-control"><br>
-                    <input type="submit" class="btn btn-primary" value="Update">
-                </form>
-
-                
             </div>
             <!-- /.container-fluid -->
 
-            
         </div>
 
 
@@ -179,7 +157,7 @@
     <!-- /#wrapper -->
 
     <!-- jQuery Version 1.11.0 -->
-
+    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>

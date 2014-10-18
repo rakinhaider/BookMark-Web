@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+    <?php $copyCount=1; ?>
+
 <head>
 
     <meta charset="utf-8">
@@ -16,22 +18,92 @@
     <!-- Bootstrap Core CSS -->
     <link href="<?php echo base_url("assets/css/bootstrap.min.css"); ?>" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
+    <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
     <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
-    <script>
-        $(document).ready(function() { 
-            $("#selected-text").select2({
-                data:{ results: data, id:book_id, text: 'tag' },
-                formatSelection: format,
-                formatResult: format
-            }); 
+    <script type="text/javascript">
+   /* var custom_array = [<?php $first=1; ?>
+            <?php foreach ($authors as $row) {
+                if(!$first)echo ",";
+                echo "'$row->text'";
+                
+                $first=0;
+            } ?>];*/
+        var dataAuthor=[<?php $first=1; ?>
+        <?php foreach ($authors as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->id,text:'$row->text'}";
+            
+            $first=0;
+        } ?>];
+        var dataPublisher=[<?php $first=1; ?>
+        <?php foreach ($publishers as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->id,text:'$row->text'}";
+            
+            $first=0;
+        } ?>];
 
-            $("#selected-text").change(function() {
+        $(document).ready(function() { 
+            $("#selectedAuthor").select2({
+                data:{
+                     results: dataAuthor
+                }
+            });
+            $("#selectCategory").select2({
+                data:[
+                    {id:1,text:'Aeronautics'},
+                    {id:2,text:'Bioengineering'},
+                    {id:3,text:'Business'},
+                    {id:4,text:'Chemical engineering'},
+                    {id:5,text:'Computer Science And Engineering'},
+                    {id:6,text:'Civil and environmental engineering'},
+                    {id:7,text:'Earth science and engineering'},
+                    {id:8,text:'Education'},
+                    {id:9,text:'Electrical and electronic engineering'},
+                    {id:10,text:'Environment'},
+                    {id:11,text:'History'},
+                    {id:12,text:'Science'},
+                    {id:13,text:'Technology'},
+                    {id:14,text:'Medicine'},
+                    {id:15,text:'Languages'},
+                    {id:16,text:'Life sciences'},
+                    {id:17,text:'Materials'},
+                    {id:18,text:'Mathematics'},
+                    {id:19,text:'Mechanical engineering'},
+                    {id:20,text:'Medicine'},
+                    {id:21,text:'Physics '},
+                    {id:22,text:'Science communication'},
+                    {id:23,text:'Translation'},
+                    {id:24,text:'Other'},
+                ]
+            });
+            $("#selectedPublisher").select2({
+                data:{
+                     results: dataPublisher
+                }
+            });
+            
+            $("#selected-text1").change(function() {
+                //var theID = $(test).val(); // works
+                //var theSelection = $(test).filter(':selected').text(); // doesn't work
+                var theID = $("#selected-text").select2('data').id;
+                var theSelection = $("#selected-text").select2('data').text;
+                
+                var fullSenetece="You have selected " + theSelection;
+                $('#selectedText').text(fullSenetece);
+                $("#update-form").css("visibility","visible");
             });
         });
     </script>
+
+    <!-- Custom CSS -->
+    <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/css/autosuggest.css"); ?>"></link>
+    
+    <script type="text/javascript" src="<?php echo base_url("assets/js/autosuggest.js"); ?>"></script>
+
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -121,26 +193,52 @@
                 </div>
 
                 <div >
-                    <form class="well" role="form" action="<?php echo base_url('index.php/admin/insertNewBook') ?>">
+                    <form role="form" method="POST" action="<?php echo base_url('index.php/admin/insertNewBook') ?>">
 
                         <label >Name:</label><br>
-                        <input type="text" class="form-control"><br>
-
-                        <label>Author:</label><br>
-                        <input type="text" class="form-control"><br>
+                        <input name="bTitle" type="text" class="form-control"><br>
+                        <label >Category:</label><br>
+                        <input name="bCategory" type="text" id="selectCategory" class="row col-lg-4"><br><br>
                         
+                        <div class="well">
+                            <h3>Author</h3>
+                            <label>Select Author</label><br>
+                            <input type="text" id="selectedAuthor" class="row col-lg-4"><br><br>
+                            <label>Or</label>
+                            <input type="button"  class="btn btn-primary" role="button" value="Add New Author">
+                            <br>
+                            <label>Name</label>
+                            <input name="aName"type="text" class="form-control"><br>
+                            <label>Address</label>
+                            <input name="aAddress"type="text" class="form-control"><br>
+                            <label>Contact</label>
+                            <input name="aContact"type="text" class="form-control"><br>
+                            <label>Email Address</label>
+                            <input name="aEmail" type="text" class="form-control"><br>
+                            <label>Website</label>
+                            <input name="aWeb" type="text" class="form-control"><br>
+                        </div>
 
-                        <label>Publisher:</label><br>
-                        <input type="text" class="form-control"><br>
 
-
-                        <label>Edition:</label><br>
-                        <input type="text" class="form-control"><br>
-
-
-                        <label>No. of Copies</label><br>
-                        <input type="text" class="form-control"><br>
-
+     
+                        <div class="well">
+                            <h3>Publisher</h3>
+                            <label>Select Publisher</label><br>
+                            <input type="text" id="selectedPublisher" class="row col-lg-4"><br><br>
+                            <label>Or</label>
+                            <input type="button"  class="btn btn-primary" role="button" value="Add New Publisher">
+                            <br>
+                            <label>Name</label>
+                            <input name="pName" type="text" class="form-control"><br>
+                            <label>Address</label>
+                            <input name="pAddress" type="text" class="form-control"><br>
+                            <label>Contact</label>
+                            <input name="pContact" type="text" class="form-control"><br>
+                            <label>Email Address</label>
+                            <input name="pEmail" type="text" class="form-control"><br>
+                            <label>Website</label>
+                            <input name="pWeb" type="text" class="form-control"><br>
+                        </div>
                         <input type="submit" class="btn btn-success" value="Submit">
                     </form>
                 </div> 
@@ -156,8 +254,7 @@
     </div>
     <!-- /#wrapper -->
 
-    <!-- jQuery Version 1.11.0 -->
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
+
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>

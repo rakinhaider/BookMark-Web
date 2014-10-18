@@ -56,7 +56,8 @@
 
         <div id="page-wrapper">
 
-            <h1>Successfully Registered.</h1>
+            <h1>Successfully Inserted the new copy in the database.</h1>
+            <p>To insert another Book click <a href="<?php echo base_url("index.php/admin/insert"); ?>">Here</a><br></p>
             <p>Go back to <a href="<?php echo base_url("index.php/home/"); ?>">Home page</a></p>
         </div>
         <!-- /#page-wrapper -->
