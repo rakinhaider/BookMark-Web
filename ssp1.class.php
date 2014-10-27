@@ -24,7 +24,7 @@ if ( is_file( $file ) ) {
 }
 
 
-class SSP {
+class SSPCatalogue {
 	/**
 	 * Create the data output array for the DataTables rows
 	 *
@@ -185,8 +185,10 @@ class SSP {
 		}
 
 		if ( $where !== '' ) {
-			$where = 'WHERE '.$where;
+			$where = ' AND '.$where;
 		}
+
+		//var_dump($where);
 
 		return $where;
 	}
@@ -212,18 +214,26 @@ class SSP {
 		$db = self::sql_connect( $sql_details );
 
 		// Build the SQL query string from the request
+		
+		//var_dump($request);
+		//var_dump($columns);
+		//var_dump($bindings);
 		$limit = self::limit( $request, $columns );
 		$order = self::order( $request, $columns );
 		$where = self::filter( $request, $columns, $bindings );
+
+
+		//var_dump($limit);
+		//var_dump($order);
+		var_dump($where);
 
 		// Main query to actually get the data
 		
 
 
 		$data = self::sql_exec( $db, $bindings,
-			"SELECT SQL_CALC_FOUND_ROWS `".implode("`, `", self::pluck($columns, 'db'))."`
-			 FROM `$table`
-			 $where
+			"SELECT SQL_CALC_FOUND_ROWS `title`, p.name as pubname, categoryName , total_copies-borrowed_copies as available FROM books b, publishers p,categories c 
+			 WHERE b.publisher_id=p.publisher_id AND b.category=c.id $where
 			 $order
 			 $limit"
 		);
@@ -245,19 +255,28 @@ class SSP {
 		);
 		$recordsTotal = $resTotalLength[0][0];
 
-		$sql="SELECT `title`, p.name as pubname, category , borrowed_copies  FROM books b, publishers p where b.publisher_id=p.publisher_id;";
+		/*var_dump($where);
+		var_dump("SELECT `title`, p.name as pubname, categoryName , total_copies-borrowed_copies as available FROM books b, publishers p,categories c 
+					$where
+					$order
+					$limit;");
+
+		$sql="SELECT `title`, p.name as pubname, categoryName , total_copies-borrowed_copies as available FROM books b, publishers p,categories c 
+			$where
+			$order
+			$limit;";
 		$stmt=$db->prepare($sql);
 		
 		$stmt->execute();
 		//var_dump();
 		$data=$stmt->fetchAll();
-
+*/
 
 		$myColumns = array(
             array( 'db' => 'title', 'dt' => 0 ),
-            array( 'db' => 'pubname',  'dt' => 1 ),
-            array( 'db' => 'category',   'dt' => 2 ),
-            array( 'db' => 'borrowed_copies',     'dt' => 3 ),
+            array( 'db' => 'name',  'dt' => 1 ),
+            array( 'db' => 'categoryName',   'dt' => 2 ),
+            array( 'db' => 'available',     'dt' => 3 ),
         );
 
 		// var_dump($print);

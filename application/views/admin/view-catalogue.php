@@ -19,11 +19,51 @@
 
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
     <link href="<?php echo base_url("assets/css/admin/catalogue.css"); ?>" rel="stylesheet">
+    
 
-    <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
-    <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#example tfoot th').each( function () {
+                var title = $('#example thead th').eq( $(this).index() ).text();
+                $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+            } );
+            var table=$('#example').dataTable({
+                "lengthMenu": [[4, 8, 12, -1], [4, 8, 12, "All"]],
+                "processing": true,
+                "serverSide": true,
+                "ajax": "<?php echo base_url(); ?>index.php/sqldata",
+                
 
+            });
+            $('#example tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+         
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            } );
+
+            /*table.columns().eq( 0 ).each( function ( colIdx ) {
+                $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
+                    table
+                        .column( colIdx )
+                        .search( this.value )
+                        .draw();
+                } );
+            } );*/
+        });
+    </script>
 
 
 </head>
@@ -101,68 +141,27 @@
         </div>
     
         <div id="catalogue">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Publisher</th>
-                        <th>Available Copies</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <?php foreach ($record as $row): ?>
-                        <tr>
-                            <td><a href="<?php echo base_url('admin/bookDetails/').$row->book_id; ?>"><?php echo $row->title; ?></a></td>
-                            <?php $authors=$this->db->query("SELECT book_id,a.author_id,a.name as authorname FROM authors a,written_by w WHERE  w.author_id=a.author_id AND w.book_id=$row->book_id;");  $authorName=''; 
-                            ?>
-                            <?php 
-                            $first=1;
-                            foreach ($authors->result() as $auth){
-                                if($first!=1)$authorName=$authorName.",";
-                                $authorName=$authorName."<a href=\"<?php echo base_url('admin/bookDetails/').$auth->author_id; ?>\">".$auth->authorname."</a>";
-                                $first=0;
-                            }
-                            ?>
-                            <td><?php echo $authorName; ?></td>
-                            <td><a href="<?php echo base_url('admin/bookDetails/').$row->pub_id; ?>"><?php echo $row->pubname; ?></a></td>
-                            <td><?php echo $row->available; ?></td>
-                        </tr>
-                        
-                    <?php endforeach ?>
-
-
-
-
-                    <!-- <tr>
-                        <td>Sherlock Homes</td>
-                        <td>Sir Aurthur Conan Doyel</td>
-                        <td>London Publisher</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>2 Mistakes Of Life</td>
-                        <td>Chetan Bhagat</td>
-                        <td>Indian Publisher</td>
-                        <td>4</td>
-                    </tr>
-                    <tr>
-                        <td>3 Mistakes Of Life</td>
-                        <td>Chetan Bhagat</td>
-                        <td>Indian Publisher</td>
-                        <td>3</td>
-                    </tr>
-                    <tr>
-                        <td>4 Mistakes Of Life</td>
-                        <td>Chetan Bhagat</td>
-                        <td>Indian Publisher</td>
-                        <td>3</td>
-                    </tr> -->
-                </tbody>
-
-            </table>
-            <?php echo $this->pagination->create_links(); ?>
+             <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Publisher</th>
+                <th>Available</th>
+                <th></th>
+            </tr>
+        </thead>
+ 
+        <tfoot>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Publisher</th>
+                <th>Available</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
         </div>
 
     </div>

@@ -271,6 +271,34 @@ class Admin extends CI_Controller {
 		
 
 	}
+
+
+	public function dataForCatalogue()
+	{
+		//var_dump($_GET);
+		$table = 'books';
+		$primaryKey = 'book_id';
+		$columns = array(
+            array( 'db' => 'title', 'dt' => 0 ),
+            array( 'db' => 'name',  'dt' => 1 ),
+            array( 'db' => 'categoryName',   'dt' => 2 ),
+            array( 'db' => 'available',     'dt' => 3 )
+        );
+         
+        $sql_details = array(
+            'user' => 'root',
+            'pass' => '',
+            'db'   => 'term_project_database',
+            'host' => 'localhost'
+        );
+        
+        require( 'ssp1.class.php' );
+        //var_dump($_GET);
+        echo json_encode(
+            SSPCatalogue::simple( $_GET, $sql_details, $table, $primaryKey ,$columns)
+        );
+	}
+
 	public function catalogue()
 	{
 

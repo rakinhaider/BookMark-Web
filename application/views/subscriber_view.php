@@ -79,7 +79,6 @@
                 <th>Position</th>
                 <th>Office</th>
                 <th>Start date</th>
-                <th>Salary</th>
             </tr>
         </thead>
  
@@ -90,7 +89,6 @@
                 <th>Position</th>
                 <th>Office</th>
                 <th>Start date</th>
-                <th>Salary</th>
             </tr>
         </tfoot>
     </table>

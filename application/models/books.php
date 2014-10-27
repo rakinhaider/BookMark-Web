@@ -312,7 +312,7 @@ class Books extends CI_Model {
     function getAllByOffsetLimit($offset,$limit)
 	{
 		$endIndex=$offset+$limit;
-		var_dump($endIndex);
+		//var_dump($endIndex);
 		$q=$this->db->query("SELECT DISTINCT b.book_id,title,c.categoryName as category,b.publisher_id as pub_id,p.name as pubname,total_copies-borrowed_copies as available from books b,publishers p,categories c
 			where b.category=c.id AND p.publisher_id=b.publisher_id LIMIT $offset,$endIndex");
 		//$q= $this->db->get('books');
