@@ -72,7 +72,7 @@
                         <a href="<?php echo base_url('index.php/admin/update') ?>">Update Book Information</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('index.php/lend') ?>">Lend Book</a>
+                        <a href="<?php echo base_url('index.php/admin/lend') ?>">Lend Book</a>
                     </li>
                     <li>
                         <a href="<?php echo base_url('index.php/admin/fine') ?>"> Manage fines.</a>

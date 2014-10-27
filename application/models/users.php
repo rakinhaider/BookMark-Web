@@ -14,4 +14,16 @@ class Users extends CI_Model {
 		if($result->num_rows()==1)return $result;
 		//else return null;
 	}
+
+	function getAll()
+	{
+		$q=$this->db->query("SELECT * FROM users WHERE email_id<>'librarian@gmail.com'");
+		return $q->result();
+	}
+
+	function getUserDetailsById($user_id)
+	{
+		$q=$this->db->query("SELECT * FROM users WHERE user_id=$user_id");
+		return $q->row();
+	}
 }

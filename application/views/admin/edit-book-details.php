@@ -4,7 +4,14 @@
 <html lang="en">
 
     <?php $copyCount=1; ?>
-
+    <?php $categoryId=$bookDetails->category; ?>
+    <?php $toSet=''; 
+    foreach ($categories as $row ) {
+        if($row->id==$categoryId)
+        {
+            $toSet=$row->text;
+        }
+    } ?>  
 <head>
 
     <meta charset="utf-8">
@@ -36,6 +43,13 @@
             
             $first=0;
         } ?>];
+        var defaultAuthor=[<?php $first=0;
+        foreach ($written_by as $row ) {
+            if($first!=0)echo ",";
+            echo '"'.$row->author_id.'"';
+            $first=1;
+        }
+         ?>];
         var dataPublisher=[<?php $first=1; ?>
         <?php foreach ($publishers as $row) {
             if(!$first)echo ",";
@@ -44,16 +58,16 @@
             $first=0;
         } ?>];
 
-        var divNewAuthor="<label>Name</label>"+
-                            "<input name=\"aName\"type=\"text\" class=\"form-control\"><br>"+
-                            "<label>Address</label>"+
-                            "<input name=\"aAddress\"type=\"text\" class=\"form-control\"><br>"+
-                            "<label>Contact</label>"+
-                            "<input name=\"aContact\"type=\"text\" class=\"form-control\"><br>"+
-                            "<label>Email Address</label>"+
-                            "<input name=\"aEmail\" type=\"text\" class=\"form-control\"><br>"+
-                            "<label>Website</label>"+
-                            "<input name=\"aWeb\" type=\"text\" class=\"form-control\"><br>";
+        var dataCategory=[<?php $first=1; ?>
+        <?php foreach ($categories as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->id,text:'$row->text'}";
+            
+            $first=0;
+        } ?>];
+
+        var authorCount=0;
+        
         var divNewPublisher="<label>Name</label>"+
                             "<input name=\"pName\" type=\"text\" class=\"form-control\"><br>"+
                             "<label>Address</label>"+
@@ -66,58 +80,44 @@
                             "<input name=\"pWeb\" type=\"text\" class=\"form-control\"><br>";
 
         $(document).ready(function() { 
+
+            $("[name=bTitle]").attr("value","<?php echo $bookDetails->title; ?>");
+
             $("#selectedAuthor").select2({
                 data:{
                      results: dataAuthor
+                },
+                multiple:true
+            });
+            $("#selectedAuthor").val(defaultAuthor).trigger("change");
+
+            $("#selectCategory").select2({
+                data:{
+                    results:dataCategory
                 }
             });
-            $("#selectCategory").select2({
-                data:[
-                    {id:1,text:'Aeronautics'},
-                    {id:2,text:'Bioengineering'},
-                    {id:3,text:'Business'},
-                    {id:4,text:'Chemical engineering'},
-                    {id:5,text:'Computer Science And Engineering'},
-                    {id:6,text:'Civil and environmental engineering'},
-                    {id:7,text:'Earth science and engineering'},
-                    {id:8,text:'Education'},
-                    {id:9,text:'Electrical and electronic engineering'},
-                    {id:10,text:'Environment'},
-                    {id:11,text:'History'},
-                    {id:12,text:'Science'},
-                    {id:13,text:'Technology'},
-                    {id:14,text:'Medicine'},
-                    {id:15,text:'Languages'},
-                    {id:16,text:'Life sciences'},
-                    {id:17,text:'Materials'},
-                    {id:18,text:'Mathematics'},
-                    {id:19,text:'Mechanical engineering'},
-                    {id:20,text:'Medicine'},
-                    {id:21,text:'Physics '},
-                    {id:22,text:'Science communication'},
-                    {id:23,text:'Translation'},
-                    {id:24,text:'Other'},
-                ]
-            });
+            $("#selectCategory").val("<?php echo $categoryId; ?>").trigger("change");
             $("#selectedPublisher").select2({
                 data:{
                      results: dataPublisher
-                }
+                },
             });
+            $("#selectedPublisher").val("<?php echo $bookDetails->publisher_id; ?>").trigger("change");
             $("#btnAddNewAuthor").click(function(){
+                authorCount=authorCount+1;
+                var divNewAuthor="<div class=\"well\"><label>"+authorCount+".Name</label>"+
+                            "<input name=\"aName"+authorCount+"\"type=\"text\" class=\"form-control\"><br>"+
+                            "<label>"+authorCount+".Address</label>"+
+                            "<input name=\"aAddress"+authorCount+"\"type=\"text\" class=\"form-control\"><br>"+
+                            "<label>"+authorCount+".Contact</label>"+
+                            "<input name=\"aContact"+authorCount+"\"type=\"text\" class=\"form-control\"><br>"+
+                            "<label>"+authorCount+".Email Address</label>"+
+                            "<input name=\"aEmail"+authorCount+"\" type=\"text\" class=\"form-control\"><br>"+
+                            "<label>"+authorCount+".Website</label>"+
+                            "<input name=\"aWeb"+authorCount+"\" type=\"text\" class=\"form-control\"><br></div>";
+                $("#divNewAuthor").append(divNewAuthor);
+                $("#newAuthorCount").attr("value",authorCount);
 
-                var btnName=$("#btnAddNewAuthor").attr("value");
-                if(btnName=="Add New Author"){
-                    $("#divNewAuthor").html(divNewAuthor);
-                    $("#divSelectorAuthor").fadeToggle( "slow", "linear" );
-                    $("#btnAddNewAuthor").attr("value","Back To Selection");
-                }
-                else if(btnName=="Back To Selection")
-                {
-                    $("#divNewAuthor").html("");
-                    $("#divSelectorAuthor").fadeToggle( "slow", "linear" );
-                    $("#btnAddNewAuthor").attr("value","Add New Author");
-                }
             });
             $("#btnAddNewPublisher").click(function(){
                 var btnName=$("#btnAddNewPublisher").attr("value");
@@ -181,7 +181,7 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                	<a href="#">Home</a>
+                    <a href="#">Home</a>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Rakin<b class="caret"></b></a>
@@ -231,19 +231,19 @@
                         <h1 class="page-header" style=" margin: 10px;
                                                 padding: 10px;
                                                 color: #428bca;">
-                            Insert New Book 
+                            Edit Book Details
                         </h1>
                         <ol class="breadcrumb">
                             <li class="active">
-                                <i class="fa fa-dashboard"></i> Insert all the books to database to create catalogue.
+                                <i class="fa fa-dashboard"></i> Change informations you want.
                             </li>
                         </ol>
                     </div>
                 </div>
 
                 <div >
-                    <form role="form" method="POST" action="<?php echo base_url('index.php/admin/insertNewBook') ?>">
-
+                    <form role="form" method="POST" action="<?php echo base_url('index.php/admin/editBookDetails') ?>">
+                        <input name="book_id" type="hidden" class="form-control" value="<?php echo $bookDetails->book_id; ?>"><br>
                         <label >Name:</label><br>
                         <input name="bTitle" type="text" class="form-control"><br>
                         <label >Category:</label><br>
@@ -257,6 +257,7 @@
                                 <label>Or</label>
                             </div>
                             <input id="btnAddNewAuthor" type="button"  class="btn btn-primary" role="button" value="Add New Author">
+                            <input name="newAuthorCount" type="hidden" value="" id="newAuthorCount">
                             <br>
                             <div id="divNewAuthor"></div>
                         </div>

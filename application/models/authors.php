@@ -16,4 +16,9 @@ class Authors extends CI_Model {
 		else return ($data=null);
 	}
 
+	function getAllAuthorForBook($book_id){
+		$q=$this->db->query("SELECT author_id FROM written_by WHERE book_id=$book_id;");
+		return $q->result();
+	}
+
 }

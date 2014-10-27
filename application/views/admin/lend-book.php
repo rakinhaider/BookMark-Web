@@ -16,53 +16,110 @@
 
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
-    <link href="<?php echo base_url("assets/css/admin/lend.css"); ?>" rel="stylesheet">
+    
 
     <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
     <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
     <script>
+
+        var userDetails=[<?php $first=1; ?>
+        <?php foreach ($users as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->user_id,first_name:'$row->first_name',last_name:'$row->last_name',date_of_birth:'$row->date_of_birth',gender:'$row->gender',nationality:'$row->nationality',occupation:'$row->occupation',address:'$row->address',email_id:'$row->email_id',no_of_books_taken:'$row->no_of_books_taken',due_fine:$row->due_fine}";
+            echo "\n";
+            
+            $first=0;
+        } ?>];
+
+        var dataUser=[<?php $first=1; ?>
+        <?php foreach ($users as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->user_id,text:'$row->email_id'}";
+
+            
+            $first=0;
+        } ?>];
+
+        var bookDetails=[<?php $first=1; ?>
+        <?php foreach ($bookDetails as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->id,title:'$row->title',category:'$row->category',pubname:'$row->pubname',available:'$row->available'}";
+            echo "\n";
+            
+            $first=0;
+        } ?>];
+        var dataBooks=[<?php $first=1; ?>
+        <?php foreach ($books as $row) {
+            if(!$first)echo ",";
+            echo "{id:$row->id,text:'$row->text'}";
+            
+            $first=0;
+        } ?>];
         $(document).ready(function() { 
             $("#User-selector").select2({
-                data:[
-                    {id:0,text:"Rakin"},
-                    {id:1,text:"Shohan"},
-                    {id:2,text:"Tanzeer"},
-                    {id:3,text:"Touhid"},
-                    {id:4,text:"Shamim"}
-                    ]
+                data:{
+                    results:dataUser
+                }
             }); 
 
             $("#User-selector").change(function() {
-                //var theID = $(test).val(); // works
-                //var theSelection = $(test).filter(':selected').text(); // doesn't work
-                var theID = $("#selected-text").select2('data').id;
-                var theSelection = $("#selected-text").select2('data').text;
-                
-                var fullSenetece="You have selected " + theSelection;
-                $('#user-details').css('visibility','visible');
+                                
+                var theID = $("#User-selector").select2('data').id;
+
+                for (var i = 0; i <dataUser.length; i++) {
+                    if(dataUser[i]["id"]==theID)
+                    {
+                        break;
+                    }
+                };
+
+                console.log(dataUser[i]);
+
+                var divUserDetails= "<h4>First Name:</h4>"+userDetails[i]["first_name"]+
+                    "<h4>Last Name:</h4>"+userDetails[i]["last_name"]+
+                    "<h4>Date Of Birth:</h4>"+userDetails[i]["date_of_birth"]+
+                    "<h4>Gender:</h4>"+userDetails[i]["gender"]+
+                    "<h4>Nationality:</h4>"+userDetails[i]["occupation"]+
+                    "<h4>Occupation:</h4>"+userDetails[i]["address"]+
+                    "<h4>Email Address:</h4>"+userDetails[i]["email_id"]+
+                    "<h4>Books Taken:</h4>"+userDetails[i]["no_of_books_taken"]+
+                    "<h4>Fines Incurred:</h4>"+userDetails[i]["due_fine"];
+
+                $('#selectedUserDetails').html(divUserDetails);
+
             });
 
             $("#book-selector").select2({
-                data:[
-                    {id:0,text:"Sherlock Homes"},
-                    {id:1,text:"Harry Potter"},
-                    {id:2,text:"3 Mistakes Of Life"},
-                    {id:3,text:"Touhid"},
-                    {id:4,text:"Shamim"}
-                    ]
+                data:{
+                    results:dataBooks
+                }
             }); 
 
             $("#book-selector").change(function() {
-                //var theID = $(test).val(); // works
-                //var theSelection = $(test).filter(':selected').text(); // doesn't work
-                var theID = $("#selected-text").select2('data').id;
-                var theSelection = $("#selected-text").select2('data').text;
-                
-                var fullSenetece="You have selected " + theSelection;
-                $('#book-details').css('visibility','visible');
+            
+                var theID = $("#book-selector").select2('data').id;
+                console.log(theID);
+                for (var i = 0; i <dataBooks.length; i++) {
+                    console.log(dataBooks[i]["id"]);
+                    console.log(theID);
+                    
+                    if(dataBooks[i]["id"]==theID)
+                    {
+                        break;
+                    }
+                };
+
+                console.log(dataBooks[i]);
+
+                var divBookDetails= "<h4>Title:</h4>"+bookDetails[i]["title"]+
+                    "<h4>Category:</h4>"+bookDetails[i]["category"]+
+                    "<h4>Publisher:</h4>"+bookDetails[i]["pubname"]+
+                    "<h4>Copies Available:</h4>"+bookDetails[i]["available"];
+                $('#selectedBookDetails').html(divBookDetails);
 
             });
+        
         });
     </script>
 
@@ -97,7 +154,7 @@
                 	<a href="#">Home</a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Rakin<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $userName; ?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#">Log out</a>
@@ -121,7 +178,7 @@
                         <a href="<?php echo base_url('index.php/admin/update') ?>">Update Book Information</a>
                     </li>
                     <li class="active">
-                        <a href="<?php echo base_url('index.php/lend') ?>">Lend Book</a>
+                        <a href="<?php echo base_url('index.php/admin/lend') ?>">Lend Book</a>
                     </li>
                     <li>
                         <a href="<?php echo base_url('index.php/admin/fine') ?>"> Manage fines.</a>
@@ -147,42 +204,51 @@
                     </div>
                 </div>
 
-        <div id="book" >
-            <label >Select a book</label>
-            <input  type="text" id="book-selector" class="form-control">
 
-            <center>
+        <table>
+            
+        </table>
 
-                <div style="visibility:hidden;" id="book-details" style="padding-top:20px">
-                    <p>Name:Sherlock Homes<br>
-                        Author:Sir Aurthur Conan Doyel<br>
-                        Publisher:London Books<br>
-                        Edition:1<br>
-                        Copies Available:5<br>
+        <table class="table table-stiped">
+            <thead>
+                <tr>
+                    <td class="col-lg-6" style="text-align:center;">Select A Book</td>
+                    <td class="col-lg-8" style="text-align:center;">Select An User</td>
+                </tr>
+            </thead>
+            <tr>
+            <form role="form" method="POST" action="<?php echo base_url('index.php/admin/lendBookToUser') ?>">    
+                <td>
+                    <input name="book" type="text" id="book-selector" class="col-lg-12">
+                </td>
 
-                    </p>
-                </div>
-            </center>
+                <td>
+                    <input name="user" type="text" id="User-selector" class="col-lg-12">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="selectedBookDetails" class="well"></div>
 
-        </div>
 
-        <div id="user">
-            <label >Select an user</label>
-            <input type="text" id="User-selector" class="form-control">
-            <center>
+                </td>
 
-                <div style="visibility:hidden;" id="user-details" style="padding-top:20px">
-                    <p>Name:Rakin<br>
-                        Borrowed Books:2<br>
-                    </p>
-                </div>
-            </center>
-        </div>
+                <td>
+                    <div id="selectedUserDetails" class="well"></div>
+                </td>
+            </tr>
+            
+        </table>
+
         
-        <center>
-            <button id="lendButton"class="btn btn-success">Lend Book</button>
-        </center>
 
+        <label style="float:left;">Return Within </label>
+        <input style="margin-left:10px;margin-right:10px;" type="number"   min="0" max="100" name="allowedDays" class="col-lg-1">
+        <label style="float:left;"> Days From Today.</label>
+        <center>
+            <input  style="float:right;" type="submit" id="lendButton" class="btn btn-success" value="Lend Book">
+        </center>
+        </form>
     </div>
 
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <?php $copyCount=1; ?>
+
 
 <head>
 
@@ -20,30 +20,86 @@
 
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
-    <!-- <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
-    <script>
-        
-        $(document).ready(function() { 
-            var data=<?php echo json_encode($authors); ?>;
-            function format(item) { return item.name; }
-            $("#selected-text1").select2({
-                data:<?php echo json_encode($authors); ?>;
-            }); 
+    <link href="<?php echo base_url("assets/css/jquery-ui.css"); ?>" rel="stylesheet">
+    <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
+    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
+    <script src="<?php echo base_url("assets/js/jquery-ui.js"); ?>"></script>
+    <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
 
-            $("#selected-text1").change(function() {
+
+    <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
+    <script>
+        var dataEdition=[<?php $first=1; ?>
+            <?php foreach ($editionName as $row) {
+                if(!$first)echo ",";
+                echo "{id:$row->isbn,text:'$row->edition_name'}";
+                
+                $first=0;
+            } ?>]; 
+        
+            /*var copyCount=0;
+            var newTableRow="<tr><td><h4>"+copyCount+".Select edition of the new Copy: </h4></td>"+
+            "<td><input name=\"edition_name<?php echo $copyCount; ?>\" type=\"text\" id=\"selectEdition\" class=\"row col-lg-4\"><br></td>"+
+            "</tr>";
+            */
+        $(document).ready(function() {
+            var copyCount=1;
+            
+            $("#selectEdition1").select2({
+                data:{
+                     results: dataEdition
+                }
             });
+            $("#addAnotherCopy").click(function(){
+                copyCount++;
+                var newTableRow="<tr><td><h4>"+copyCount+".Select edition of the new Copy: </h4></td>"+
+                "<td><input name=\"edition_name"+copyCount+"\" type=\"text\" id=\"selectEdition"+copyCount+"\" class=\"row col-lg-4\"><br></td>"+
+                "</tr>";
+                $("#table").append(newTableRow);
+
+                $("#selectEdition"+copyCount).select2({
+                    data:{
+                         results: dataEdition
+                    }
+                });
+                $("#hiddenCopyCount").attr("value",copyCount); 
+            });
+
+            $("#addNewEdition").click(function(){
+                var divAddNewEdition="<form role=\"form\" method=\"POST\" action=\"<?php echo base_url('index.php/admin/insertNewEdition') ?>\">"+
+                    "<input type=\"hidden\" name=\"bTitle\" value=\"<?php echo $bTitle ?>\">"+
+                    "<input type=\"hidden\" name=\"bId\" value=\"<?php echo $bId ?>\">"+
+                    "<table class=\"table table-striped\">"+
+                        "<thead>"+
+                            "<tr>" +
+                                "<th class=\"row col-lg-2\">ISBN</th>"+
+                                "<th class=\"row col-lg-2\">Edition Name</th>"+
+                                "<th class=\"row col-lg-2\">Year of Publication</th>"+
+                                "<th class=\"row col-lg-2\">Typeset</th>"+
+                                "<th class=\"row col-lg-2\">Printer</th>"+
+                            "</tr>"+
+                        "</thead>"+
+                        "<tr>"+
+                            "<td><input style=\"margin-left:3px;\" name=\"isbn\" type=\"text\"  class=\"row col-lg-11\"></td>"+
+                            "<td><input name=\"edition_name\" type=\"text\"  class=\"row col-lg-12\"></td>"+
+                            "<td><input id=\"datePicker\" name=\"yearOfPub\" type=\"text\"  class=\"row col-lg-12\"></td>"+
+                            "<td><input name=\"typeset\" type=\"text\"  class=\"row col-lg-12\"></td>"+
+                            "<td><input name=\"printer\" type=\"text\"  class=\"row col-lg-12\"></td>"+
+                        "</tr>"+
+                    "</table>"+  
+                    "<input style=\"margin:3px;\" type=\"submit\" class=\"btn btn-success\" value=\"Submit\">"+
+                "</form>";
+
+                $("#divAddNewEdition").html(divAddNewEdition);
+                $("#datePicker").datepicker();
+                
+            });
+
         });
-        $("#addCopyButton").click(function(){
-                <?php $copyCount++; ?>
-                $("#copyEntries").append("<label><?php echo $copyCount; ?></label><label>ISBN</label><input type="text" class="form-control"><br><label>Edition Name</label><input type="text" class="form-control"><br><label>Year Of Publication</label><input type="text" class="form-control"><br><label>Typeset</label><input type="text" class="form-control"><br><label>Printer</label><input type="text" class="form-control"><br>");
-            });
-    </script>-->
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+
+
+    </script>
+
 
 </head>
 
@@ -125,25 +181,33 @@
                             </li>
                         </ol>
                     </div>
-                </div>                    
+                </div> 
+                <div>To add new edition, click&nbsp<input style="margin:10px;" id="addNewEdition" type="button" class="btn btn-primary" value="Add new edition."></div>                   
+                <div id="divAddNewEdition"></div>
                 <div class="well">
                     <form role="form" method="POST" action="<?php echo base_url('index.php/admin/insertNewCopy') ?>">
 
-                        <input type="hidden" name="bTitle" value="<?php echo $bTitle; ?>">
-                        <input type="hidden" name="bId" value="<?php echo $bId; ?>">
 
-                        <label >ISBN:</label><br>
-                        <input name="isbn" type="text" class="form-control"><br>
-                        <label >Edition Name:</label><br>
-                        <input name="edition_name" type="text" class="form-control"><br>
-                        <label >Year Of Publication:</label><br>
-                        <input name="year_of_publication" type="text" class="form-control"><br>
-                        <label >Typeset:</label><br>
-                        <input name="typeset" type="text" class="form-control"><br>
-                        <label >Printer:</label><br>
-                        <input name="printer" type="text" class="form-control"><br>
                         
+                        <input type="hidden" name="bId" value="<?php echo $bId; ?>">
+                        <input type="hidden" name="copyCount" value="1" id="hiddenCopyCount">
+                        <table id="table" class="table table-striped">
+                            <thead>
+                                <tr> 
+                                    <th class="row col-lg-4"></th>
+                                    <th class="row col-lg-4">Edition Name</th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td><h4>1.Select edition of the new Copy: </h4></td>
+                                <td><input name="edition_name1" type="text" id="selectEdition1" class="row col-lg-4"><br></td>
+                            </tr>
+                        </table>  
+                        
+
+                        <input id="addAnotherCopy" type="button" class="btn btn-success" value="Add Another Copy">
                         <input type="submit" class="btn btn-success" value="Submit">
+
                     </form>
                 </div> 
 
@@ -157,10 +221,8 @@
     <!-- /#wrapper -->
 
     <!-- jQuery Version 1.11.0 -->
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
-
+    
     <!-- Bootstrap Core JavaScript -->
-    <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
 
 
 </body>

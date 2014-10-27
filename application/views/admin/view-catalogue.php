@@ -50,7 +50,7 @@
                 	<a href="#">Home</a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Rakin<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">$userName<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#">Log out</a>
@@ -74,7 +74,7 @@
                         <a href="<?php echo base_url('index.php/admin/update') ?>">Update Book Information</a>
                     </li>
                     <li>
-                        <a href="<?php echo base_url('index.php/lend') ?>">Lend Book</a>
+                        <a href="<?php echo base_url('index.php/admin/lend') ?>">Lend Book</a>
                     </li>
                     <li >
                         <a href="<?php echo base_url('index.php/admin/fine') ?>"> Manage fines.</a>
@@ -114,9 +114,19 @@
 
                     <?php foreach ($record as $row): ?>
                         <tr>
-                            <td><a href=""><?php echo $row->title; ?></a></td>
-                            <td><a href=""><?php echo $row->authorname; ?></a></td>
-                            <td><a href=""><?php echo $row->pubname; ?></a></td>
+                            <td><a href="<?php echo base_url('admin/bookDetails/').$row->book_id; ?>"><?php echo $row->title; ?></a></td>
+                            <?php $authors=$this->db->query("SELECT book_id,a.author_id,a.name as authorname FROM authors a,written_by w WHERE  w.author_id=a.author_id AND w.book_id=$row->book_id;");  $authorName=''; 
+                            ?>
+                            <?php 
+                            $first=1;
+                            foreach ($authors->result() as $auth){
+                                if($first!=1)$authorName=$authorName.",";
+                                $authorName=$authorName."<a href=\"<?php echo base_url('admin/bookDetails/').$auth->author_id; ?>\">".$auth->authorname."</a>";
+                                $first=0;
+                            }
+                            ?>
+                            <td><?php echo $authorName; ?></td>
+                            <td><a href="<?php echo base_url('admin/bookDetails/').$row->pub_id; ?>"><?php echo $row->pubname; ?></a></td>
                             <td><?php echo $row->available; ?></td>
                         </tr>
                         
@@ -152,6 +162,7 @@
                 </tbody>
 
             </table>
+            <?php echo $this->pagination->create_links(); ?>
         </div>
 
     </div>

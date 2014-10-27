@@ -4,21 +4,25 @@ class Copies extends CI_Model {
 
 	function insertNew($data){
 
-		$bTitle=$this->input->post('bTitle');;
-		$bId=$this->input->post('bId');;
-
-		$isbn=$this->input->post('isbn');
-		$edition_name=$this->input->post('edition_name');
-		$year_of_publication=$this->input->post('year_of_publication');
-		$typeset=$this->input->post('typeset');
-		$printer=$this->input->post('printer');
+		$bId=$this->input->post('bId');
+		$copyCount=$this->input->post('copyCount');
 		
-		$q=$this->db->query("SELECT * FROM editions WHERE isbn=".$isbn.";");
+		for ($i=1; $i <=$copyCount ; $i++ ){ 
 
+			$postName="edition_name".$i;
+			$isbn=$this->input->post($postName);
 
-		if($q->num_rows==0)
-			$this->db->query("INSERT INTO  editions (`ISBN` ,`edition_name` ,`year_of_publication` ,`typeset` ,`printer`) VALUES ('$isbn', '$edition_name' , '$year_of_publication' , '$typeset' , '$printer')");
+			$this->db->query("INSERT INTO  `copies` (`book_id` ,`isbn`)VALUES ($bId, $isbn);");
+		}
 
-		$this->db->query("INSERT INTO  `copies` (`book_id` ,`isbn`)VALUES ($bId, $isbn);");
+		$this->db->query("UPDATE books SET total_copies=total_copies+$copyCount WHERE book_id=$bId;");
 	}
+
+	function getCopyIdToLend($book_id)
+	{
+		$q=$this->db->query("SELECT min(copy_id) as copytolend FROM copies WHERE book_id=$book_id AND is_borrowed=0;");
+		$q=$q->row()->copytolend;
+		return $q;
+	}
+
 }
