@@ -19,29 +19,93 @@
 
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
     <link href="<?php echo base_url("assets/css/admin/catalogue.css"); ?>" rel="stylesheet">
-    
+    <style type="text/css" class="init">
+
+        td.details-control {
+            background: url('<?php echo base_url() ?>assets/images/details_open.png') no-repeat center center;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            background: url('<?php echo base_url() ?>assets/images/details_close.png') no-repeat center center;
+        }
+
+    </style>
 
     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
+            
+
+
+            function format ( d ) {
+    // `d` is the original data object for the row
+                var authors="";
+                $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url(); ?>index.php/admin/getAuthorList",
+                        data:{book_id:d.book_id},
+                        async:false,
+                        success:function(data){
+                            authors=data;
+
+                            //console.log(data);
+                        }
+                });
+
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+                    '<tr>'+
+                        '<td>Title:</td>'+
+                        '<td>'+d.title+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<td>Publisher:</td>'+
+                        '<td><a href=\"publisherDetails/'+d.publisher_id+'\">'+d.pubname+'</a></td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<td>Category:</td>'+
+                        '<td>'+d.category+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<td id=\"authrorList'+d.book_id+'\"">Category:</td>'+
+                        '<td>'+authors+'</td>'+
+                    '</tr>'+
+                '</table>';
+            }
+
             $('#example tfoot th').each( function () {
                 var title = $('#example thead th').eq( $(this).index() ).text();
                 $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
             } );
-            var table=$('#example').dataTable({
+            var table=$('#example').DataTable({
                 "lengthMenu": [[4, 8, 12, -1], [4, 8, 12, "All"]],
                 "processing": true,
                 "serverSide": true,
                 "ajax": "<?php echo base_url(); ?>index.php/sqldata",
-                
+                "columns": [
+                                
+                                { "data": "title" },
+                                { "data": "pubname" },
+                                { "data": "category" },
+                                { "data": "available" },
+                                {
+                                    "class":          'details-control',
+                                    "orderable":      false,
+                                    "data":           null,
+                                    "defaultContent": ''
+                                },
+                            ]
 
             });
             $('#example tbody').on('click', 'td.details-control', function () {
+                
+
+
                 var tr = $(this).closest('tr');
                 var row = table.row( tr );
-         
+
+                
                 if ( row.child.isShown() ) {
                     // This row is already open - close it
                     row.child.hide();
@@ -49,19 +113,19 @@
                 }
                 else {
                     // Open this row
-                    row.child( format(row.data()) ).show();
+                    row.child( format(row.data() ) ).show();
                     tr.addClass('shown');
                 }
             } );
 
-            /*table.columns().eq( 0 ).each( function ( colIdx ) {
+            table.columns().eq( 0 ).each( function ( colIdx ) {
                 $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
                     table
                         .column( colIdx )
                         .search( this.value )
                         .draw();
                 } );
-            } );*/
+            } );
         });
     </script>
 

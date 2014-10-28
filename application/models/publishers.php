@@ -16,4 +16,14 @@ class Publishers extends CI_Model {
 		else return ($data=null);
 	}
 
+	function getPublisherInfoById($publisher_id){
+		$q=$this->db->query("SELECT *  FROM publishers WHERE publisher_id=$publisher_id;");
+		//$q= $this->db->get('books');
+		if($q->num_rows>0)
+		{
+			
+			return $q->row();
+		}
+	}
+
 }

@@ -192,8 +192,7 @@ class Admin extends CI_Controller {
 		$this->books->editBookById($_POST);
 		redirect('admin/editSuccess');
 	}
-	public function editSuccess()
-	{
+	public function editSuccess(){
 		$this->load->view('admin/edit-success');	
 	}
 	public function lend()
@@ -272,6 +271,39 @@ class Admin extends CI_Controller {
 
 	}
 
+	public function getAuthorList()
+	{
+		$book_id=$this->input->post('book_id');
+		$this->load->model('authors');
+		$data=$this->authors->getAllAuthorForBook($book_id);
+		$str='';
+		foreach ($data as $row ) {
+			$str .= "<a href=\"authorDetails/$row->authorId\">$row->name</a> , ";
+		}
+		$str = substr_replace( $str, "", -2 );
+		echo $str;
+	}
+	public function authorDetails($author_id){
+
+		$userName = $this->session->userdata('userName');
+		$this->load->model('authors');
+		$data['userName']=$userName;
+		$data['authorInfo']=$this->authors->getAuthorInfoById($author_id);
+
+		$this->load->view('details/author-details',$data);
+
+	}
+
+	public function publisherDetails($publisher_id){
+
+		$userName = $this->session->userdata('userName');
+		$this->load->model('publishers');
+		$data['userName']=$userName;
+		$data['publisherInfo']=$this->publishers->getPublisherInfoById($publisher_id);
+
+		$this->load->view('details/publisher-details',$data);
+
+	}
 
 	public function dataForCatalogue()
 	{
