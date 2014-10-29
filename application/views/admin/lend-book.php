@@ -17,10 +17,15 @@
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
     
+     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
+    
 
     <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
+    
     <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
+    <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
     <script>
 
         var userDetails=[<?php $first=1; ?>
@@ -56,7 +61,18 @@
             
             $first=0;
         } ?>];
-        $(document).ready(function() { 
+        $(document).ready(function() {
+
+            $("#sectionB").hide();
+            $("#lendTab").click(function(){
+                $("#sectionA").show();
+                $("#sectionB").hide();
+            });
+            $("#recieveTab").click(function(){
+                $("#sectionA").hide();
+                $("#sectionB").show();
+            });
+
             $("#User-selector").select2({
                 data:{
                     results:dataUser
@@ -119,6 +135,49 @@
                 $('#selectedBookDetails').html(divBookDetails);
 
             });
+            $("#example").DataTable({
+                "lengthMenu": [[4, 8, 12, -1], [4, 8, 12, "All"]],
+                "processing": true,
+                "serverSide": true,
+                "ajax": "<?php echo base_url(); ?>index.php/sqldata/borrowList",
+                "columns": [
+                                
+                                { "data": "bookTitle" },
+                                {   
+                                    "data": "user",
+                                    "orderable":      false 
+                                },
+                                { "data": "issueDate" },
+                                { "data": "toReturnDate" },
+                                {
+                                    "class":          'details-control',
+                                    "orderable":      false,
+                                    "data":           null,
+                                    "defaultContent": '<input id="btnReceived" type="button" class="btn btn-primary" value="Received Books" submit="<?php base_url() ?>admin/updateReception/">'
+                                },
+                            ],
+                "order":[1,"asc"]
+
+            });
+            $('#example tbody').on('click', 'td.details-control #btnReceived', function () {
+                
+                //alert("works");
+
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+
+                
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data() ) ).show();
+                    tr.addClass('shown');
+                }
+            } );
         
         });
     </script>
@@ -191,68 +250,112 @@
             <!-- /.navbar-collapse -->
         </nav>
 
-        <div class="row">
-                    <div class="col-lg-12">
-                        <h1 class="page-header"style="  margin: 10px;padding: 10px;color: #428bca;">
-                            Lend Book 
-                        </h1>
-                        <ol class="breadcrumb" id="breadcrumbdiv">
-                            <li class="active">
-                                Lend Requested Book
-                            </li>
-                        </ol>
-                    </div>
+
+        <ul class="nav nav-pills navbar-inverse" role="tablist">
+          <li class="active" id="lendTab"><a data-toggle="tab" href="#sectionA">Lend Books</a></li>
+          <li id="recieveTab"><a data-toggle="tab" href="#sectionB">Update Book Reception Information</a></li>
+        </ul>  
+
+        <div class="tab-content">
+        <div id="sectionA" class="tab-pane fade in active">
+        
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header"style="  margin: 10px;padding: 10px;color: #428bca;">
+                        Lend Book 
+                    </h1>
+                    <ol class="breadcrumb" id="breadcrumbdiv">
+                        <li class="active">
+                            Lend Requested Book
+                        </li>
+                    </ol>
                 </div>
+            </div>
 
 
-        <table>
-            
-        </table>
+            <form role="form" method="POST" action="<?php echo base_url('index.php/admin/lendBookToUser') ?>">
+                <table class="table table-stiped">
+                    <thead>
+                        <tr>
+                            <td class="col-lg-6" style="text-align:center;">Select A Book</td>
+                            <td class="col-lg-8" style="text-align:center;">Select An User</td>
+                        </tr>
+                    </thead>
+                    <tr>
+                        
+                        <td>
+                            <input name="book" type="text" id="book-selector" class="col-lg-12">
+                        </td>
 
-        <table class="table table-stiped">
-            <thead>
-                <tr>
-                    <td class="col-lg-6" style="text-align:center;">Select A Book</td>
-                    <td class="col-lg-8" style="text-align:center;">Select An User</td>
-                </tr>
-            </thead>
-            <tr>
-            <form role="form" method="POST" action="<?php echo base_url('index.php/admin/lendBookToUser') ?>">    
-                <td>
-                    <input name="book" type="text" id="book-selector" class="col-lg-12">
-                </td>
-
-                <td>
-                    <input name="user" type="text" id="User-selector" class="col-lg-12">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div id="selectedBookDetails" class="well"></div>
+                        <td>
+                            <input name="user" type="text" id="User-selector" class="col-lg-12">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="selectedBookDetails" class="well"></div>
 
 
-                </td>
+                        </td>
 
-                <td>
-                    <div id="selectedUserDetails" class="well"></div>
-                </td>
-            </tr>
-            
-        </table>
+                        <td>
+                            <div id="selectedUserDetails" class="well"></div>
+                        </td>
+                    </tr>
+                    
+                </table>
 
         
 
-        <label style="float:left;">Return Within </label>
-        <input style="margin-left:10px;margin-right:10px;" type="number"   min="0" max="100" name="allowedDays" class="col-lg-1">
-        <label style="float:left;"> Days From Today.</label>
-        <center>
-            <input  style="float:right;" type="submit" id="lendButton" class="btn btn-success" value="Lend Book">
-        </center>
-        </form>
+                <label style="float:left;">Return Within </label>
+                <input style="margin-left:10px;margin-right:10px;" type="number"   min="0" max="100" name="allowedDays" class="col-lg-1">
+                <label style="float:left;"> Days From Today.</label>
+                <center>
+                    <input  style="float:right;" type="submit" id="lendButton" class="btn btn-success" value="Lend Book">
+                </center>
+            </form>
+        </div>
+        </div>
+        <div id="sectionB" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header"style="  margin: 10px;padding: 10px;color: #428bca;">
+                        Update Reception of Lent Books.
+                    </h1>
+                    <ol class="breadcrumb" id="breadcrumbdiv">
+                        <li class="active">
+                            Already Borrowed Books.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User</th>
+                        <th>Issue Date</th>
+                        <th>Expected Return Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+         
+                <tfoot>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>User</th>
+                        <th>Issue Date</th>
+                        <th>Expected Return Date</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 
-    <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
+        
 
+    
 
 </body>
 

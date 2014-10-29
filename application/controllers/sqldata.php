@@ -55,7 +55,7 @@ class Sqldata extends CI_Controller{
             }
         }
          
-        if ( $_GET['search'] != "" )
+        if ( $_GET['search']['value'] != "" )
         {
             //$sWhere .= "WHERE (";
             $sWhere .= " AND (";
@@ -191,7 +191,7 @@ class Sqldata extends CI_Controller{
             }
         }
          
-        if ( $_GET['search'] != "" )
+        if ( $_GET['search']['value'] != "" )
         {
             //$sWhere .= "WHERE (";
             $sWhere .= " AND (";
@@ -327,7 +327,7 @@ class Sqldata extends CI_Controller{
             }
         }
          
-        if ( $_GET['search'] != "" )
+        if ( $_GET['search']['value'] != "" )
         {
             //$sWhere .= "WHERE (";
             $sWhere .= " AND (";
@@ -409,6 +409,149 @@ class Sqldata extends CI_Controller{
                         'category'=>$aRow[2],
                         'available'=>$aRow[3],
                         'publisher_id'=>$aRow[4]
+                        );
+            $output['data'][] = $row;
+        }
+        echo json_encode( $output );
+    }
+
+    function borrowList(){
+        
+        //var_dump($_GET);
+
+        $aColumns = array( 'b.title','CONCAT(u.first_name," ",u.last_name,"(",u.email_id,")")', 'bor.issue_date', 'bor.to_return_date');
+        $sIndexColumn = "bor.user_id,bor.copy_id,bor.book_id";
+        $sTable = "books b, users u, borrowed_by bor";
+        $sWhere = "WHERE b.book_id=bor.book_id AND u.user_id=bor.user_id ";
+     
+        /* Database connection information removed */
+        
+        
+
+        $columnCount=count($_GET['columns']);
+        for ($i=0; $i <$columnCount ; $i++) { 
+            $config[$i]['data'] = $_GET['columns'][$i]['data'];
+            $config[$i]['name'] = $_GET['columns'][$i]['name'];
+            $config[$i]['searchable'] = $_GET['columns'][$i]['searchable'];
+            $config[$i]['orderable'] = $_GET['columns'][$i]['orderable'];  
+            $config[$i]['search'] = $_GET['columns'][$i]['search'];    
+        }
+
+        for ($i=0; $i <count($config) ; $i++) { 
+            if($config[$i]['data']=="")array_splice($config, $i,1);
+        }
+        $columnCount=count($config);
+        $gaSql['link'] = mysql_connect('localhost', 'root', '');
+        $db_selected = mysql_select_db('term_project_database', $gaSql['link'] );
+         
+         
+        $sLimit = "";
+        if ( isset( $_GET['length'] ) )
+        {
+            $sLimit = "LIMIT ".mysql_real_escape_string( $_GET['start']).", ".
+                mysql_real_escape_string( $_GET['length'] );
+        }
+         
+         
+        if ( isset( $_GET['order'] ) )
+        {
+            $sOrder = "ORDER BY  ";
+            for ( $i=0 ; $i<count( $_GET['order'] ) ; $i++ )
+            {
+                $ordColumn=intval($_GET['order'][$i]['column']);
+                $ordDir=$_GET['order'][$i]['dir'];
+                if($config[$ordColumn]['orderable']=='true')
+                    $sOrder .= $aColumns[ $ordColumn ]." ".mysql_real_escape_string( $ordDir ) .", ";
+            }
+            $sOrder = substr_replace( $sOrder, "", -2 );
+            if ( $sOrder == "ORDER BY" )
+            {
+                $sOrder = "";
+            }
+        }
+         
+        if ( $_GET['search']['value'] != "" )
+        {
+            //$sWhere .= "WHERE (";
+            $sWhere .= " AND (";
+            for ( $i=0 ; $i<$columnCount ; $i++ )
+            {
+                if($_GET['search']['value'])$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' OR ";
+            }
+            $sWhere = substr_replace( $sWhere, "", -3 );
+            $sWhere .= ')';
+        }
+         
+        /* Individual column filtering */
+        for ( $i=0 ; $i<$columnCount ; $i++ )
+        {
+            if ( $config[$i]['search']['value'] != "" && $config[$i]['searchable'] == "true" )
+            {
+                if ( $sWhere == "" )
+                {
+                    $sWhere = "WHERE ";
+                }
+                else
+                {
+                    $sWhere .= " AND ";
+                }
+                $sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($config[$i]['search']['value'])."%' ";
+            }
+        }
+        // var_dump("SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $aColumns))."
+        //     FROM   $sTable
+        //     $sWhere
+        //     $sOrder
+        //     $sLimit");
+        $sQuery = "
+            SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $aColumns))."
+            FROM   $sTable
+            $sWhere
+            $sOrder
+            $sLimit
+        ";
+        //var_dump($sQuery);
+        $rResult = mysql_query( $sQuery, $gaSql['link'] ) or die(mysql_error());
+         
+        /* Data set length after filtering */
+        $sQuery = "
+            SELECT FOUND_ROWS()
+        ";
+        $rResultFilterTotal = mysql_query( $sQuery, $gaSql['link'] ) or die(mysql_error());
+        $aResultFilterTotal = mysql_fetch_array($rResultFilterTotal);
+        $iFilteredTotal = $aResultFilterTotal[0];
+         
+        /* Total data set length */
+        $sQuery = "
+            SELECT COUNT(*)
+            FROM   $sTable $sWhere
+        ";
+        //var_dump($sQuery);
+        $rResultTotal = mysql_query( $sQuery, $gaSql['link'] ) or die(mysql_error());
+        $aResultTotal = mysql_fetch_array($rResultTotal);
+        $iTotal = $aResultTotal[0];
+         
+        $output = array(
+            "draw" => intval($_GET['draw']),
+            "recordsTotal" => $iTotal,
+            "recordsFiltered" => $iFilteredTotal,
+            "data" => array()
+        );
+         
+        while ( $aRow = mysql_fetch_array( $rResult ) )
+        {
+            //var_dump($aRow);
+            $row = array();
+            /*for ( $i=0 ; $i<count($aColumns) ; $i++ )
+            {
+                
+               //$row[]=$aRow[$i];
+            }*/
+            $row = array(
+                        'bookTitle'=>$aRow[0],
+                        'user'=>$aRow[1],
+                        'issueDate'=>$aRow[2],
+                        'toReturnDate'=>$aRow[3]
                         );
             $output['data'][] = $row;
         }
