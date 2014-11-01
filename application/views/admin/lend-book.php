@@ -17,7 +17,7 @@
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
     
-     <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/>
+    <!-- <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/> -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
     
@@ -26,6 +26,7 @@
     
     <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
+    <script src="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.js"></script> 
     <script>
 
         var userDetails=[<?php $first=1; ?>
@@ -135,7 +136,7 @@
                 $('#selectedBookDetails').html(divBookDetails);
 
             });
-            $("#example").DataTable({
+            var table=$("#example").DataTable({
                 "lengthMenu": [[4, 8, 12, -1], [4, 8, 12, "All"]],
                 "processing": true,
                 "serverSide": true,
@@ -166,8 +167,10 @@
                 var tr = $(this).closest('tr');
                 var row = table.row( tr );
 
-                
-                if ( row.child.isShown() ) {
+                var data=row.data();
+                //alert(data);
+                window.location.href = "<?php echo base_url(); ?>"+"index.php/admin/updateReception/"+data.bookId+"/"+data.userId+"/"+data.copyId+"/"+data.toReturnDate;
+                /*if ( row.child.isShown() ) {
                     // This row is already open - close it
                     row.child.hide();
                     tr.removeClass('shown');
@@ -176,8 +179,10 @@
                     // Open this row
                     row.child( format(row.data() ) ).show();
                     tr.addClass('shown');
-                }
+                }*/
             } );
+            $("#example_filter").css( "float", "right" );
+            $("#example_paginate").css( "float", "right" );
         
         });
     </script>
@@ -216,7 +221,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $userName; ?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#">Log out</a>
+                            <a href="<?php echo base_url("index.php/login/logOut");  ?>">Log out</a>
                         </li>
                         <li>
                             <a href="#">Settings</a>
@@ -256,7 +261,7 @@
           <li id="recieveTab"><a data-toggle="tab" href="#sectionB">Update Book Reception Information</a></li>
         </ul>  
 
-        <div class="tab-content">
+        <div class="tab-content" style="margin:10px;">
         <div id="sectionA" class="tab-pane fade in active">
         
             <div class="row">
@@ -316,7 +321,7 @@
             </form>
         </div>
         </div>
-        <div id="sectionB" class="tab-pane fade in active">
+        <div id="sectionB" style="margin:10px;" class="tab-pane fade in active">
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header"style="  margin: 10px;padding: 10px;color: #428bca;">
@@ -329,7 +334,7 @@
                     </ol>
                 </div>
             </div>
-            <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%" >
                 <thead>
                     <tr>
                         <th>Book Title</th>

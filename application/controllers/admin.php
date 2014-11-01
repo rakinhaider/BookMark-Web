@@ -151,41 +151,26 @@ class Admin extends CI_Controller {
 	}
 	public function showRemoveCopy($bTitle,$book_id)
 	{
-		var_dump($bTitle);
-
-
-		$this->load->model('copies');
-		$this->load->library('pagination');
-		$config['base_url']=base_url()."index.php/admin/showRemoveCopy/";
-		$config['total_rows']=$this->copies->getCopyCount($book_id);
-		$config['per_page']=4;
-		$config['num_links']=20;
-
-
-		$config['full_tag_open'] = '<center><ul class="pagination pagination-small pagination-centered">';
-		$config['full_tag_close'] = '</ul></center>';
-		$config['prev_link'] = '&lt; Prev';
-		$config['prev_tag_open'] = '<li>';
-		$config['prev_tag_close'] = '</li>';
-		$config['next_link'] = 'Next &gt;';
-		$config['next_tag_open'] = '<li>';
-		$config['next_tag_close'] = '</li>';
-		$config['cur_tag_open'] = '<li class="active"><a href="#">';
-		$config['cur_tag_close'] = '</a></li>';
-		$config['num_tag_open'] = '<li>';
-		$config['num_tag_close'] = '</li>';
-		$config['first_link'] = true;
-		$config['last_link'] = true;
-
-
-		$this->pagination->initialize($config);
-		$offset=$this->uri->segment(3);
-		if($offset=='')$offset=0;
-		$data['record']=$this->books->getAllByOffsetLimit($offset,$config['per_page']);
-		
-		//var_dump($data['total_rows']);
-		$this->load->view('admin/view-catalogue',$data);
+		$userName = $this->session->userdata('userName');
+		$data['userName']=$userName;
+		$data['book_id']=$book_id;
+		$data['bTitle']=$bTitle;
+		$this->load->view('admin/view-copies',$data);
 	}
+	public function copyRemoval($bTitle,$book_id,$data){
+		$data=urldecode($data);
+		$tok=strtok($data, ",");
+		$this->load->model('copies');
+
+		$todelete=array();
+		while ($tok !== false) {
+		    $todelete[]=$tok;
+		    $this->copies->removeCopy($tok);
+		    $tok = strtok(" \n\t");
+		}
+		redirect('admin/showRemoveCopy/'.$bTitle.'/'.$book_id);
+	}
+
 
 	public function editBookDetails(){
 		$this->load->model('books');
@@ -248,8 +233,27 @@ class Admin extends CI_Controller {
 
 		$data['userDetails']=$userDetails;
 		$data['bookDetails']=$bookDetails;
+		redirect('admin/lend');
+		//$this->load->view('admin/lend-successful',$data);
+	}
+	public function updateReception($book_id,$user_id,$copy_id,$to_return_date){
+		$this->load->model('borrowedby');
+		$this->borrowedby->updateReception($book_id,$user_id,$copy_id,$to_return_date);
+		redirect('admin/lend');
+	}
 
-		$this->load->view('admin/lend-successful',$data);
+
+
+	public function clearFine($user_id)
+	{
+		$this->load->model('users');
+		$this->users->clearFine($user_id);
+		redirect('admin/fine');
+	}
+	public function clearPayment($user_id,$amount){
+		$this->load->model('users');
+		$this->useres->clearPayment($user_id,$amount);
+		redirect('admin/fine');
 	}
 	public function fine()
 	{
@@ -265,7 +269,7 @@ class Admin extends CI_Controller {
 		{
 			$data=array(
 			'userName'=>$userName);
-			$this->load->view('admin/manage-fines');
+			$this->load->view('admin/manage-fines',$data);
 		}
 		
 
@@ -305,32 +309,7 @@ class Admin extends CI_Controller {
 
 	}
 
-	public function dataForCatalogue()
-	{
-		//var_dump($_GET);
-		$table = 'books';
-		$primaryKey = 'book_id';
-		$columns = array(
-            array( 'db' => 'title', 'dt' => 0 ),
-            array( 'db' => 'name',  'dt' => 1 ),
-            array( 'db' => 'categoryName',   'dt' => 2 ),
-            array( 'db' => 'available',     'dt' => 3 )
-        );
-         
-        $sql_details = array(
-            'user' => 'root',
-            'pass' => '',
-            'db'   => 'term_project_database',
-            'host' => 'localhost'
-        );
-        
-        require( 'ssp1.class.php' );
-        //var_dump($_GET);
-        echo json_encode(
-            SSPCatalogue::simple( $_GET, $sql_details, $table, $primaryKey ,$columns)
-        );
-	}
-
+	
 	public function catalogue()
 	{
 
@@ -342,7 +321,7 @@ class Admin extends CI_Controller {
 		{
 			$this->error_access();
 		}
-		else if($userName=="admin")
+		else 
 		{
 			$this->load->model('books');
 			$data['userName']=$userName;
@@ -389,6 +368,33 @@ class Admin extends CI_Controller {
 		$this->load->view('home/login_failed',$data);
 	}
 
+	public function phpTester(){
+
+		$days = abs((strtotime('2014-9-29') - strtotime('2014-10-31')) / (60 * 60 * 24));
+print $days;
+
+		/*$from=date_create(date('Y-m-d'));
+		$to=date_create("2013-03-15");
+		$diff=date_diff($to,$from);
+		print_r($diff);
+		echo $diff->format('%R%a days');*/
+
+
+		/*$january = new DateTime('2010-01-01');
+		$february = new DateTime('2010-02-01');
+		$datetime1 = new DateTime('2009-10-11');
+		$datetime2 = new DateTime('2009-11-13');
+
+
+		$interval = $datetime1->diff($datetime2);
+		echo $interval->format('%m');*/
+		// %a will output the total number of days.
+		//echo $interval->format('%a total days')."\n";
+
+		// While %d will only output the number of days not already covered by the
+		// month.
+		//echo $interval->format('%m month, %d days');
+	}
 }
 
 /* End of file welcome.php */

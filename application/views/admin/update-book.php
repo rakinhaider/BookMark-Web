@@ -108,10 +108,10 @@
                 	<a href="#">Home</a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Rakin<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $userName; ?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#">Log out</a>
+                            <a href="<?php echo base_url("index.php/login/logOut");  ?>">Log out</a>
                         </li>
                         <li>
                             <a href="#">Settings</a>

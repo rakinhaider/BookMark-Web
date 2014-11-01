@@ -120,7 +120,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<?php echo base_url('index.php/admin/insert') ?>">
                                 <div class="panel-footer">
                                     <span class="pull-left">Insert New Book</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -142,7 +142,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<?php echo base_url('index.php/admin/update') ?>">
                                 <div class="panel-footer">
                                     <span class="pull-left">Update Details</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -164,7 +164,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<?php echo base_url('index.php/admin/lend') ?>">
                                 <div class="panel-footer">
                                     <span class="pull-left">Lend Book</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -186,7 +186,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#">
+                            <a href="<?php echo base_url('index.php/admin/fine') ?>">
                                 <div class="panel-footer">
                                     <span class="pull-left">Clear Fine</span>
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

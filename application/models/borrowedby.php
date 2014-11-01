@@ -8,10 +8,10 @@ class BorrowedBy extends CI_Model {
 		$user_id=$this->input->post('user');
 		$allowedDays=$this->input->post('allowedDays');
 		
-		$date=date("d.m.y");
+		$date=date("Y.m.d");
 		// var_dump($allowedDays);
 		$toReturnDate  = mktime(0, 0, 0, date("m")  , date("d")+$allowedDays, date("Y"));
-		$toReturnDate=gmdate("d.m.y", $toReturnDate);
+		$toReturnDate=gmdate("Y.m.d", $toReturnDate);
 		// var_dump($tomorrow);
 
 		$this->load->model('copies');
@@ -30,6 +30,18 @@ class BorrowedBy extends CI_Model {
 		$data['user_id']=$user_id;
 		$data['book_id']=$book_id;
 		return $data;
+
+	}
+	function updateReception($book_id,$user_id,$copy_id,$to_return_date){
+		
+		$date=date('Y-m-d');
+		$this->db->query("UPDATE borrowed_by SET returned_date=$date,is_returned=1 WHERE book_id=$book_id AND copy_id=$copy_id AND user_id=$user_id;");
+		$this->db->query("UPDATE copies SET is_borrowed=0 WHERE book_id=$book_id AND copy_id=$copy_id;");
+
+		$days = abs((strtotime($date) - strtotime($to_return_date)) / (60 * 60 * 24));
+
+		$this->load->model('users');
+		$this->users->updateFine($user_id,$days*5);
 
 	}
 

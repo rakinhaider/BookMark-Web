@@ -27,10 +27,11 @@
 				</a>
 			</div>
 			<ul class="nav navbar-nav navbar-right">
-
-		  			<li ><a href="#">Home</a></li>
+				
+		  			<li ><a href="<?php echo base_url(); ?>index.php/home">Home</a></li>
 		  			<li ><a style="cursor:pointer;" id="loginpopup">Log In</a></li>
 		  			<li ><a id="signup_popup">Register</a></li>
+		  			<li ><a href="#"><span class="glyphicon glyphicon-question-sign"></span></a></li>
 		  	</ul>
 		</div>
 	</nav>

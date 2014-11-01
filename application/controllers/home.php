@@ -73,14 +73,17 @@ class Home extends CI_Controller {
 		}
 		else
 		{
-			$data=array(
-			'userName'=>$userName);
-
-			$this->load->view('user/user_homepage',$data);
+			redirect('user');
 		}
 		
 	}
 	
+	public function userManual()	
+	{
+		$this->load->view('home/user-manual');
+		
+	}
+
 }
 
 /* End of file welcome.php */

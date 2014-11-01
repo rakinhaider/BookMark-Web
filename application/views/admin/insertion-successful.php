@@ -45,10 +45,15 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                	<a href="#">Home</a>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">admin<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="<?php echo base_url("index.php/login/logOut");  ?>">Log out</a>
+                        </li>
+                        <li>
+                            <a href="#">Settings</a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             

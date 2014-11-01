@@ -19,6 +19,7 @@
 
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
     <link href="<?php echo base_url("assets/css/admin/catalogue.css"); ?>" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>assets/css/dataTables.tableTools.css">
     <style type="text/css" class="init">
 
         td.details-control {
@@ -30,10 +31,13 @@
         }
 
     </style>
+    
 
-    <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/>
+    <!-- <link rel="stylesheet" href="<?php echo base_url();?>assets/css/jquery.dataTables.css" type="text/css" media="screen"/> -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.js"></script> 
+    <script type="text/javascript" language="javascript" src="<?php echo base_url(); ?>assets/js/dataTables.tableTools.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             
@@ -95,7 +99,22 @@
                                     "data":           null,
                                     "defaultContent": ''
                                 },
-                            ]
+                            ],
+                "dom": 'T<"clear">lfrtip',
+                "tableTools": {
+                        "aButtons": [
+                            "copy",
+                            "csv",
+                            "xls",
+                            {
+                                "sExtends": "pdf",
+                                "sPdfOrientation": "landscape",
+                                "sPdfMessage": "Your custom message would go here."
+                            },
+                            "print"
+                    ]
+                }
+            
 
             });
             $('#example tbody').on('click', 'td.details-control', function () {
@@ -117,6 +136,9 @@
                     tr.addClass('shown');
                 }
             } );
+
+            $("#example_filter").css( "float", "right" );
+            $("#example_paginate").css( "float", "right" );
 
             table.columns().eq( 0 ).each( function ( colIdx ) {
                 $( 'input', table.column( colIdx ).footer() ).on( 'keyup change', function () {
@@ -154,10 +176,10 @@
                 	<a href="#">Home</a>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">$userName<b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $userName; ?><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#">Log out</a>
+                            <a href="<?php echo base_url("index.php/login/logOut");  ?>">Log out</a>
                         </li>
                         <li>
                             <a href="#">Settings</a>
@@ -205,7 +227,7 @@
         </div>
     
         <div id="catalogue">
-             <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+             <table id="example" class="table table-striped table-hover table-bordered datatable" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th>Title</th>

@@ -17,6 +17,74 @@
     <!-- Custom CSS -->
     <link href="<?php echo base_url("assets/css/admin/admin.css"); ?>" rel="stylesheet">
 
+    <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
+    <link href="<?php echo base_url("assets/css/jquery-ui.css"); ?>" rel="stylesheet">
+    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
+    <script src="<?php echo base_url("assets/js/jquery-ui.js"); ?>"></script>
+    <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
+    <script type="text/javascript">
+        var divEdit="<form role=\"form\" method=\"POST\" action=\"<?php echo base_url('index.php/user/editInfo').'/'.$user_id.'/'.urlencode($userInfo->email_id); ?>\"><label class=\"col-lg-2\">First Name: </label><input id=\"first_name\" type=\"text\" name=\"first_name\" ><br>"+
+                    "<label class=\"col-lg-2\">Last Name: </label><input id=\"last_name\" type=\"text\" name=\"last_name\" ><br>"+
+                    "<label class=\"col-lg-2\">Email Address: </label><input id=\"email_id\" type=\"text\" name=\"email_id\" ><br>"+
+                    "<label class=\"col-lg-2\">Address: </label><input id=\"address\" type=\"text\" name=\"address\" ><br>"+
+                    "<label class=\"col-lg-2\">Occupation: </label><input id=\"occupation\" type=\"text\" name=\"occupation\" ><br>"+
+                    "<label class=\"col-lg-2\">Nationality: </label><input id=\"nationality\" type=\"text\" name=\"nationality\" ><br>"+
+                    "<label class=\"col-lg-2\">Date Of Birth: </label><input id=\"datePicker\"type=\"text\" name=\"date_of_birth\" ><br>"+
+                    "<label class=\"col-lg-2\">Gender: </label><input class=\"col-lg-2\" id=\"genderSelector\" type=\"text\" name=\"gender\" ><br><input type=\"submit\" class=\"btn btn-success\" value=\"Submit\"></form>";
+        
+
+        $(document).ready(function() { 
+            
+            $("#divEdit").fadeToggle( "slow", "linear" ); 
+            $("#editButton").click(function(){
+                var val=$(this).text();
+                if(val=="Edit Info")
+                {
+                    $("#divEdit").html(divEdit); 
+                    $("#divEdit").fadeToggle( "slow", "linear" ); 
+                    $("#divShow").fadeToggle( "slow", "linear" ); 
+                    //$("#editButton").text("Submit");
+                    //$("#editButton").attr("class","btn btn-primary");
+
+
+                    $("#first_name").val("<?php echo $userInfo->first_name; ?>");
+                    $("#last_name").val("<?php echo $userInfo->last_name; ?>");
+                    $("#email_id").val("<?php echo $userInfo->email_id; ?>");
+                    $("#email_id").attr('disabled','disabled');
+                    $("#address").val("<?php echo $userInfo->address; ?>");
+                    $("#occupation").val("<?php echo $userInfo->occupation; ?>");
+                    $("#datePicker").datepicker();
+                    $("#datePicker").val("<?php echo $userInfo->date_of_birth; ?>");
+                    $("#genderSelector").select2({
+                        data:[
+                            {id:1,text:'Male'},
+                            {id:2,text:'Female'},
+                            
+                        ]
+                    });
+                    var gender="<?php echo $userInfo->gender; ?>";
+                    if(gender=="male")$("#genderSelector").val(1).trigger("change");
+                    else $("#genderSelector").val(2).trigger("change");
+                }
+                
+                // var btnName=$("#btnAddNewPublisher").attr("value");
+                // if(btnName=="Add New Publisher"){
+                //     $("#divNewPublisher").html(divNewPublisher);
+                //     $("#divSelectorPublisher").fadeToggle( "slow", "linear" );
+                //     $("#btnAddNewPublisher").attr("value","Back To Selection");
+                // }
+                // else if(btnName=="Back To Selection")
+                // {
+                //     $("#divNewPublisher").html("");
+                //     $("#divSelectorPublisher").fadeToggle( "slow", "linear" );
+                //     $("#btnAddNewPublisher").attr("value","Add New Publisher");
+                // }
+            });
+            
+        });
+
+    </script>
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -63,16 +131,13 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li class="active">
-                        <a href="personalInfo"> Personal Info</a>
+                        <a href="<?php echo base_url() ?>index.php/user"> Personal Info</a>
                     </li>
                     <li>
-                        <a href="#">Borrowed Books</a>
+                        <a href="<?php echo base_url() ?>index.php/user/borrowedCopies">Borrowed Books</a>
                     </li>
                     <li>
-                        <a href="#">Search Books</a>
-                    </li>
-                    <li>
-                        <a href="#">My Fines</a>
+                        <a href="<?php echo base_url() ?>index.php/user/catalogue">Search Books</a>
                     </li>
                 </ul>
             </div>
@@ -89,7 +154,7 @@
                         <h1 class="page-header" style=" margin: 10px;
                                                 padding: 10px;
                                                 color: #428bca;">
-                            Dashboard <small>Statistics Overview</small>
+                            Personal Info <small>User Details</small>
                         </h1>
                         <ol class="breadcrumb">
                             <li class="active">
@@ -98,159 +163,25 @@
                         </ol>
                     </div>
                 </div>
-                <!-- /.row -->
 
-                <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-comments fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge"><br></div>
-                                        <div>New Book</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Insert New Book</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-tasks fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge"><br></div>
-                                        <div>New Changes</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Update Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-shopping-cart fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge"><br></div>
-                                        <div>New Lending Request</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Lend Book</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-red">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-support fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge"><br></div>
-                                        <div>New Payment</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#">
-                                <div class="panel-footer">
-                                    <span class="pull-left">Clear Fine</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                <div class="well" id="divShow">
+                    <label>Name: </label><b><?php echo $userInfo->first_name." ".$userInfo->last_name; ?></b><br>
+                    
+                    <label>Email Address: </label><b><?php echo $userInfo->email_id; ?></b><br>
+                    <label>Address: </label><b><?php echo $userInfo->address; ?></b><br>
+                    
+                    <label>Occupation: </label><b><?php echo $userInfo->occupation; ?></b><br>
+                    <label>Nationality: </label><b><?php echo $userInfo->nationality; ?></b><br>
+                    
+                    <label>Date Of Birth: </label><b><?php echo $userInfo->date_of_birth; ?></b><br>
+
+                    <label>Gender: </label><b><?php echo $userInfo->gender; ?></b><br>
+                    <label>Fines Incurred: </label><b><?php echo $userInfo->due_fine; ?></b><br>
+
+                    <button class="btn btn-danger" style="margin-left: 950px;;" id="editButton">Edit Info</button>
                 </div>
-                <!-- /.row -->
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-bar-chart-o fa-fw"></i> Area Chart</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div id="morris-area-chart"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-long-arrow-right fa-fw"></i> Donut Chart</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div id="morris-donut-chart"></div>
-                                <div class="text-right">
-                                    <a href="#">View Details <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-clock-o fa-fw"></i> Tasks Panel</h3>
-                            </div>
-                            <div class="panel-body">
-                                
-                                <div class="text-right">
-                                    <a href="#">View All Activity <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Transactions Panel</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    
-                                </div>
-                                <div class="text-right">
-                                    <a href="#">View All Transactions <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-
+                
+                <div id="divEdit" class="well"></div>
             </div>
             <!-- /.container-fluid -->
 
@@ -266,7 +197,7 @@
     <!-- /#wrapper -->
 
     <!-- jQuery Version 1.11.0 -->
-    <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
+ 
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>

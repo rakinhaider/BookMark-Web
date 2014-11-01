@@ -25,6 +25,7 @@ class Login extends CI_Controller{
 
 			$this->session->set_userdata($data);
 			redirect('home/login_success');
+			//redirect('user');
 		}
 	}
 
