@@ -20,12 +20,14 @@
     <link href="<?php echo base_url("assets/css/admin/catalogue.css"); ?>" rel="stylesheet">
 
     <link href="<?php echo base_url("assets/css/select2.css"); ?>" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>assets/css/dataTables.tableTools.css">
     <script src="<?php echo base_url("assets/js/jquery.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/select2/select2.js"); ?>"></script>
     <script src="<?php echo base_url("assets/js/bootstrap.min.js"); ?>"></script>
 
 
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="<?php echo base_url(); ?>assets/js/dataTables.tableTools.js"></script>
     <script src="//cdn.datatables.net/plug-ins/380cb78f450/integration/bootstrap/3/dataTables.bootstrap.js"></script> 
 
 
@@ -109,6 +111,10 @@
                         $('td #amountRecieved', row).attr('disabled','disabled');
                     }
                     
+                },
+                "dom": 'T<"clear">lfrtip',
+                "tableTools": {
+                    "sSwfPath": "<?php echo base_url() ?>assets/swf/copy_csv_xls_pdf.swf"
                 },
                 "order": [[ 2, "desc" ]]
 
