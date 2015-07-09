@@ -102,17 +102,7 @@
                             ],
                 "dom": 'T<"clear">lfrtip',
                 "tableTools": {
-                        "aButtons": [
-                            "copy",
-                            "csv",
-                            "xls",
-                            {
-                                "sExtends": "pdf",
-                                "sPdfOrientation": "landscape",
-                                "sPdfMessage": "Your custom message would go here."
-                            },
-                            "print"
-                    ]
+                    "sSwfPath": "<?php echo base_url() ?>assets/swf/copy_csv_xls_pdf.swf"
                 }
             
 

@@ -619,10 +619,15 @@ class Sqldata extends CI_Controller{
          
         if ( $_GET['search']['value'] != "" )
         {
-            $sWhere .= "WHERE (";
-            //$sWhere .= " AND (";
+            //$sWhere .= "WHERE (";
+            $sWhere .= " AND (";
             for ( $i=0 ; $i<$columnCount ; $i++ )
             {
+                if($i==0){
+                    $sWhere .= " u.first_name"." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' OR ";
+                    $sWhere .= " u.last_name"." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' OR ";
+                    continue;
+                }
                 if($_GET['search']['value'])$sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' OR ";
             }
             $sWhere = substr_replace( $sWhere, "", -3 );
@@ -641,6 +646,11 @@ class Sqldata extends CI_Controller{
                 else
                 {
                     $sWhere .= " AND ";
+                }
+                if($i==0){
+                     $sWhere .= "u.first_name"." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' AND ";
+                    $sWhere .= "u.last_name"." LIKE '%".mysql_real_escape_string( $_GET['search']['value'] )."%' AND ";
+                    continue;
                 }
                 $sWhere .= $aColumns[$i]." LIKE '%".mysql_real_escape_string($config[$i]['search']['value'])."%' ";
             }
@@ -854,7 +864,7 @@ class Sqldata extends CI_Controller{
         $aColumns = array( 'b.title', 'e.edition_name','bor.issue_date','bor.to_return_date','bor.is_returned','p.name','b.book_id','p.publisher_id','e.isbn','cat.categoryName');
         $sIndexColumn = "bor.book_id";
         $sTable = "books b, borrowed_by bor, copies c, editions e, publishers p,categories cat";
-        $sWhere = "WHERE bor.book_id = b.book_id AND bor.user_id =12 AND c.copy_id = bor.copy_id AND c.isbn = e.isbn AND b.publisher_id = p.publisher_id AND b.category=cat.id ";
+        $sWhere = "WHERE bor.book_id = b.book_id AND bor.user_id =$user_id AND c.copy_id = bor.copy_id AND c.isbn = e.isbn AND b.publisher_id = p.publisher_id AND b.category=cat.id ";
      
         /* Database connection information removed */
 
