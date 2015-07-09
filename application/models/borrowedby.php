@@ -25,7 +25,7 @@ class BorrowedBy extends CI_Model {
 		$this->db->query("INSERT INTO borrowed_by (user_id, copy_id, book_id, issue_date, to_return_date, returned_date, is_returned) VALUES ($user_id, $copyIdToLend, $book_id, '$date', '$toReturnDate', '00-00-0000', 0);");
 
 		$this->db->query("UPDATE copies SET is_borrowed=1 where copy_id=$copyIdToLend AND book_id=$book_id;");
-		$this->db->query("UPDATE books SET borrowed_copies=borrowed_copies+1 where  book_id=$book_id;");
+
 		$data['copy_id']=$copyIdToLend;
 		$data['user_id']=$user_id;
 		$data['book_id']=$book_id;

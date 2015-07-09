@@ -166,12 +166,8 @@ class Books extends CI_Model {
         $q=$this->db->query("INSERT INTO  written_by (`book_id` ,`author_id`)
         	VALUES ('$book_id',  '$author_id')"); 
 
-
-        $data['bTitle']=$bTitle;
-        $data['bid']=$book_id;
         $this->session->set_flashdata('bTitle', $bTitle);
         $this->session->set_flashdata('bId', $book_id);   
-        return $data;
     } 
 
     function getBookDetailsById($book_id){

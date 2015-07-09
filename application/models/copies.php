@@ -26,14 +26,11 @@ class Copies extends CI_Model {
 	}
 	function removeCopy($copy_id)
 	{
-
-		$q=$this->db->query("SELECT book_id,is_borrowed FROM copies WHERE copy_id=$copy_id");
+		$q=$this->db->query("SELECT book_id FROM copies WHERE copy_id=$copy_id");
 		$book_id=$q->row()->book_id;
-		$is_borrowed=$q->row->is_borrowed;
 		$q=$this->db->query("DELETE FROM copies WHERE copy_id=$copy_id;");
 		
 		if($q==true)$this->db->query("UPDATE books SET total_copies=total_copies-1 WHERE book_id=$book_id");
-		if($is_borrowed==1)$this->db->query("UPDATE books SET borrowed_copies=borrowed_copies-1 WHERE book_id=$book_id");
 	}
 
 }

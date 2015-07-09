@@ -100,11 +100,10 @@ class Admin extends CI_Controller {
 	public function insertNewBook()
 	{
 		$this->load->model('books');
-		$data=$this->books->insert($_POST);	
+		$this->books->insert($_POST);	
 		$bTitle=$this->session->flashdata('bTitle');
-        $book_id=$this->session->flashdata('bId' ); 
-        //var_dump($data['bTitle']); 	
-		redirect('admin/showInsertNewCopy/'.$data['bTitle']."/".$data['bid']);
+        $book_id=$this->session->flashdata('bId' );  	
+		redirect('admin/showInsertNewCopy/'.$bTitle."/".$book_id);
 
 	}
 	public function update()
@@ -144,7 +143,7 @@ class Admin extends CI_Controller {
 		$data['bookDetails']=$bookDetails;
 		$data['authors']=$this->authors->getAll();
 		$data['publishers']=$this->publishers->getAll();
-		$data['written_by']=$this->authors->getAllAuthorForBookUpdate($book_id);
+		$data['written_by']=$this->authors->getAllAuthorForBook($book_id);
 		$data['categories']=$this->categories->getAll();	
 		//var_dump($data['categories']);
 		$this->load->view('admin/edit-book-details',$data);
